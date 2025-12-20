@@ -1,9 +1,10 @@
 #pragma once
 
-//#define USE_MATRIX_I2C
-
-//#define QUICK_TAP_TERM 0
-//#define TAPPING_TERM 100
+// https://getreuer.info/posts/keyboards/faqs/index.html#home-row-mods-are-hard-to-use
+// https://docs.qmk.fm/tap_hold
+#define TAPPING_TERM 200
+#define CHORDAL_HOLD
+#define PERMISSIVE_HOLD
 
 #ifdef RGBLIGHT_ENABLE
     #define RGBLIGHT_EFFECT_BREATHING
