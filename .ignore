@@ -1,0 +1,2 @@
+# git submodule files not interesting to see in search
+qmk_firmware/
