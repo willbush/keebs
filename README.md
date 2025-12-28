@@ -2,7 +2,7 @@
 
 A place for my keyboard keymaps and configurations.
 
-I'm using vanilla QMK firmware on a rev1 [Corne](https://github.com/foostan/crkbd) and rev6 Planck (hardly used).
+I'm using vanilla QMK firmware on a rev1 [Corne](https://github.com/foostan/crkbd) and rev6 Planck (rarely use now).
 
 ## Architecture
 
