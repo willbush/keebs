@@ -1,3 +1,11 @@
-ifeq ($(strip $(AUDIO_ENABLE)), yes)
-    SRC += muse.c
-endif
+AUDIO_ENABLE     = yes
+MUSIC_ENABLE     = no
+MIDI_ENABLE      = no
+BACKLIGHT_ENABLE = no
+CONSOLE_ENABLE   = no
+EXTRAKEY_ENABLE  = no
+MOUSEKEY_ENABLE  = no
+RGBLIGHT_ENABLE  = no
+STENO_ENABLE     = no
+ENCODER_ENABLE   = no
+DIP_SWITCH_MAP_ENABLE = no
