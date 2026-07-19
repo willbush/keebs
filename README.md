@@ -60,3 +60,21 @@ On NixOS the following sets up `udev` rules for non-root access to the firmware.
 ```nix
 hardware.keyboard.qmk.enable = true;
 ```
+
+## Update QMK
+
+Bump `qmk_firmware` to the latest upstream master and sync its nested submodules:
+
+```sh
+git submodule update --remote --depth 1 qmk_firmware
+git -C qmk_firmware submodule update --init --recursive
+```
+
+Test recompile both keyboards, then commit the new pin. The submodule has
+`ignore = all` set, so it won't show in `git status` and staging requires
+`--force`:
+
+```sh
+git add --force qmk_firmware
+```
+
