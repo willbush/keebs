@@ -3,8 +3,8 @@
 enum planck_layers {
   _COLEMAK,
   _SC2, // SC2 game layer
-  _CG,  // SC2 control groups
-  _CGS, // SC2 control groups with shift held (append)
+  _LG, // lower game layer
+  _HG, // hyper game layer
   _LOWER,
   _HYPER,
   _RAISE,
@@ -16,8 +16,8 @@ enum planck_layers {
 #define COLEMAK PDF(_COLEMAK)
 #define SC2 PDF(_SC2)
 #define LOWER MO(_LOWER)
-#define CG MO(_CG)
-#define CGS MO(_CGS)
+#define LG MO(_LG)
+#define HG MO(_HG)
 #define RAISE MO(_RAISE)
 #define HYPER MO(_HYPER)
 #define FN MO(_FN)
@@ -45,18 +45,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U, KC_COMM, KC_SCLN, KC_BSPC,
     CTL_ESC,    KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O, CTL_QOT,
     KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_Y,  KC_DOT, KC_SLSH, SFT_ENT,
-    XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT,      CG,     CGS,  KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
+    XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT,      LG,     HG,   KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
   ),
-  [_CG] = LAYOUT_planck_grid(
-       KC_0,    KC_1,    KC_2,    KC_3,  KC_SPC, _______, _______, _______, _______, _______, _______, _______,
-    KC_LCTL,    KC_4,    KC_5,    KC_6,  KC_SPC, _______, _______, _______, _______, _______, _______,  KC_DEL,
-    _______,    KC_7,    KC_8,    KC_9,  KC_SPC,      FN, _______, _______, _______, _______, _______, KC_RSFT,
+  [_LG] = LAYOUT_planck_grid(
+    _______,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5, _______, _______, _______, _______, _______, _______,
+    _______,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0, _______, _______, _______, _______, _______,  KC_DEL,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_RSFT,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
-  [_CGS] = LAYOUT_planck_grid(
-    S(KC_0), S(KC_1), S(KC_2), S(KC_3),  KC_SPC, _______, _______, _______, _______, _______, _______, _______,
-    KC_LCTL, S(KC_4), S(KC_5), S(KC_6),  KC_SPC, _______, _______, _______, _______, _______, _______,  KC_DEL,
-    _______, S(KC_7), S(KC_8), S(KC_9),  KC_SPC, _______, _______, _______, _______, _______, _______, KC_RSFT,
+  [_HG] = LAYOUT_planck_grid(
+    _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5, _______, _______, _______, _______, _______, _______,
+    _______,   KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10, _______, _______, _______, _______, _______,  KC_DEL,
+    _______,  KC_F11,  KC_F12, _______, _______, _______, _______, _______, _______, _______, _______, KC_RSFT,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
   // *** SC2 layouts ends ***
@@ -113,9 +113,9 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 
 layer_state_t layer_state_set_user(layer_state_t state) {
   state = update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
-  // The SC2 layer swaps LOWER for CG, so it needs its own path to _ADJUST.
+  // The SC2 layer swaps LOWER for LG, so it needs its own path to _ADJUST.
   // Must come after the call above, which clears _ADJUST.
-  if (layer_state_cmp(state, _CG) && layer_state_cmp(state, _RAISE)) {
+  if (layer_state_cmp(state, _LG) && layer_state_cmp(state, _RAISE)) {
     state |= (layer_state_t)1 << _ADJUST;
   }
   return state;
