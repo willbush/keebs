@@ -4,7 +4,6 @@ enum planck_layers {
   _COLEMAK,
   _SC2, // SC2 game layer
   _INJ, // queen inject (cameras with shift held)
-  _CAM, // SC2 camera layer
   _SETCAM, // SC2 camera location create layer
   _LOWER,
   _HYPER,
@@ -17,7 +16,6 @@ enum planck_layers {
 #define COLEMAK PDF(_COLEMAK)
 #define SC2 PDF(_SC2)
 #define LOWER MO(_LOWER)
-#define CAM MO(_CAM)
 #define SETCAM MO(_SETCAM)
 #define INJ LM(_INJ, MOD_LSFT)
 #define RAISE MO(_RAISE)
@@ -60,19 +58,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U, KC_COMM, KC_SCLN, KC_BSPC,
     CTL_ESC,    KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O, CTL_QOT,
     KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_Y,  KC_DOT, KC_SLSH, SFT_ENT,
-    XXXXXXX, XXXXXXX, XXXXXXX,     INJ,     CAM,  SETCAM,   KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
+    XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT,     INJ,  SETCAM,   KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
   ),
-  // Every key here fires shifted.
+  // Every key here is shifted. Digits 1-8 are camera hot keys so the point is to
+  // easily have layer hold key also hold shift which lets me inject quickly.
+  // Shifted digits still resolve to the plain camera binds, so no alternate
+  // bind is needed in the game.
   [_INJ] = LAYOUT_planck_grid(
     _______,    KC_1,    KC_2,    KC_3,    KC_V, _______, _______, _______, _______, _______, _______, _______,
     _______,    KC_4,    KC_5,    KC_6,    KC_V, _______, _______, _______, _______, _______, _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
-  ),
-  [_CAM] = LAYOUT_planck_grid(
-    _______,    KC_1,    KC_2,    KC_3,    KC_V, _______, _______, _______, _______, _______, _______, _______,
-    _______,    KC_4,    KC_5,    KC_6,    KC_V, _______, _______, _______, _______, _______, _______,  KC_DEL,
-    _______,    KC_7,    KC_8,    KC_9,    KC_0, _______, _______, _______, _______, _______, _______, KC_RSFT,
+    _______,    KC_7,    KC_8,    KC_9,    KC_0, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
   [_SETCAM] = LAYOUT_planck_grid(
@@ -135,9 +130,9 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 
 layer_state_t layer_state_set_user(layer_state_t state) {
   state = update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
-  // The SC2 layer swaps LOWER for CAM, so it needs its own path to _ADJUST.
+  // The SC2 layer swaps LOWER for INJ, so it needs its own path to _ADJUST.
   // Must come after the call above, which clears _ADJUST.
-  if (layer_state_cmp(state, _CAM) && layer_state_cmp(state, _RAISE)) {
+  if (layer_state_cmp(state, _INJ) && layer_state_cmp(state, _RAISE)) {
     state |= (layer_state_t)1 << _ADJUST;
   }
   return state;
