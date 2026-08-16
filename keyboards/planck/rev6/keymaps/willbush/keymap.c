@@ -5,7 +5,7 @@ enum planck_layers {
   _SC2, // SC2 game layer
   _INJ, // queen inject (cameras with shift held)
   _CAM, // SC2 camera layer
-  _HG, // hyper game layer
+  _SETCAM, // SC2 camera location create layer
   _LOWER,
   _HYPER,
   _RAISE,
@@ -22,12 +22,25 @@ enum custom_keycodes {
 #define SC2 PDF(_SC2)
 #define LOWER MO(_LOWER)
 #define CAM MO(_CAM)
-#define HG MO(_HG)
+#define SETCAM MO(_SETCAM)
 #define INJ LM(_INJ, MOD_LSFT)
 #define RAISE MO(_RAISE)
 #define HYPER MO(_HYPER)
 #define FN MO(_FN)
 #define NUM MO(_NUM)
+
+// SC2 camera location create binds
+#define CAM1 LCTL(KC_1)
+#define CAM2 LCTL(KC_2)
+#define CAM3 LCTL(KC_3)
+#define CAM4 LCTL(KC_4)
+#define CAM5 LCTL(KC_5)
+#define CAM6 LCTL(KC_6)
+#define CAM7 LCTL(KC_7)
+#define CAM8 LCTL(KC_8)
+
+// SC2 select all idle workers, since plain F1 only cycles one at a time
+#define ALLIDLE LCTL(KC_F1)
 
 // right hand
 #define ALT_DOT RALT_T(KC_DOT)
@@ -51,7 +64,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U, KC_COMM, KC_SCLN, KC_BSPC,
     CTL_ESC,    KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O, CTL_QOT,
     KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_Y,  KC_DOT, KC_SLSH, SFT_ENT,
-    XXXXXXX, XXXXXXX, XXXXXXX,     INJ,     CAM,     HG,   KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
+    XXXXXXX, XXXXXXX, XXXXXXX,     INJ,     CAM,  SETCAM,   KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
   ),
   // Every key here fires shifted, except INJ_B, which opts out.
   [_INJ] = LAYOUT_planck_grid(
@@ -66,10 +79,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______,    KC_7,    KC_8,    KC_9,    KC_0, _______, _______, _______, _______, _______, _______, KC_RSFT,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
-  [_HG] = LAYOUT_planck_grid(
-    _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5, _______, _______, _______, _______, _______, _______,
-    _______,   KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10, _______, _______, _______, _______, _______,  KC_DEL,
-    _______,  KC_F11,  KC_F12, _______, _______, _______, _______, _______, _______, _______, _______, KC_RSFT,
+  [_SETCAM] = LAYOUT_planck_grid(
+    _______,    CAM1,    CAM2,    CAM3,    KC_0, _______,  KC_F12,   KC_F7,   KC_F8,   KC_F9, _______, _______,
+    _______,    CAM4,    CAM5,    CAM6,    KC_0, ALLIDLE,  KC_F11,   KC_F4,   KC_F5,   KC_F6, _______,  KC_DEL,
+    _______,    CAM7,    CAM8,    KC_9,    KC_0,   KC_F2,  KC_F10,   KC_F1,   KC_F2,   KC_F3, _______, KC_RSFT,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
   // *** SC2 layouts ends ***
