@@ -3,6 +3,7 @@
 enum planck_layers {
   _COLEMAK,
   _SC2, // SC2 game layer
+  _INJ, // queen inject (cameras with shift held)
   _LG, // lower game layer
   _HG, // hyper game layer
   _LOWER,
@@ -13,11 +14,16 @@ enum planck_layers {
   _ADJUST
 };
 
+enum custom_keycodes {
+  INJ_B = SAFE_RANGE, // KC_B without the shift the _INJ layer holds down
+};
+
 #define COLEMAK PDF(_COLEMAK)
 #define SC2 PDF(_SC2)
 #define LOWER MO(_LOWER)
 #define LG MO(_LG)
 #define HG MO(_HG)
+#define INJ LM(_INJ, MOD_LSFT)
 #define RAISE MO(_RAISE)
 #define HYPER MO(_HYPER)
 #define FN MO(_FN)
@@ -45,7 +51,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U, KC_COMM, KC_SCLN, KC_BSPC,
     CTL_ESC,    KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O, CTL_QOT,
     KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_Y,  KC_DOT, KC_SLSH, SFT_ENT,
-    XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT,      LG,     HG,   KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
+    XXXXXXX, XXXXXXX, XXXXXXX,     INJ,      LG,     HG,   KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
+  ),
+  // Every key here fires shifted, except INJ_B, which opts out.
+  [_INJ] = LAYOUT_planck_grid(
+    _______,    KC_1,    KC_2,    KC_3,    KC_V, _______, _______, _______, _______, _______, _______, _______,
+    _______,    KC_4,    KC_5,    KC_6,   INJ_B, _______, _______, _______, _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
   [_LG] = LAYOUT_planck_grid(
     _______,    KC_1,    KC_2,    KC_3,    KC_V, _______, _______, _______, _______, _______, _______, _______,
@@ -98,6 +111,25 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   )
 };
 // clang-format on
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case INJ_B:
+            // SC2 ignores a shifted stop, so drop the shift _INJ holds down.
+            if (record->event.pressed) {
+                unregister_mods(MOD_LSFT);
+                register_code(KC_B);
+            } else {
+                unregister_code(KC_B);
+                if (IS_LAYER_ON(_INJ)) {
+                    register_mods(MOD_LSFT);
+                }
+            }
+            return false;
+        default:
+            return true;
+    }
+}
 
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
