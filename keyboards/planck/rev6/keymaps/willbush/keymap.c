@@ -64,9 +64,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     XXXXXXX, XXXXXXX, KC_LALT,  SETCAM,     INJ,    GRID,   KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
   ),
   [_SETCAM] = LAYOUT_planck_grid(
-    _______,    CAM1,    CAM2,    CAM3,    KC_0, _______, _______, _______, _______, _______, _______, _______,
-    _______,    CAM4,    CAM5,    CAM6,    KC_0, _______, _______, _______, _______, _______, _______,  KC_DEL,
-    _______,    CAM7,    CAM8,    KC_9,    KC_0, _______, _______, _______, _______, _______, _______, KC_RSFT,
+    _______,    CAM1,    CAM2,    CAM3,    CAM4, _______, _______, _______, _______, _______, _______, _______,
+    _______,    CAM5,    CAM6,    CAM7,    CAM8, _______, _______, _______, _______, _______, _______,  KC_DEL,
+    _______, _______, _______,    KC_0,    KC_9, _______, _______, _______, _______, _______, _______, KC_RSFT,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
   // Shift is held down while holding this layer. everything to the right of
@@ -75,9 +75,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // inject quickly. Shifted digits still resolve to the plain camera binds, so
   // no alternate bind is needed in the game.
   [_INJ] = LAYOUT_planck_grid(
-    _______,    KC_1,    KC_2,    KC_3, _______, _______,  KC_F12,   KC_F7,   KC_F8,   KC_F9, _______, _______,
-    _______,    KC_4,    KC_5,    KC_6, _______, _______,  KC_F11,   KC_F4,   KC_F5,   KC_F6, _______, _______,
-    _______,    KC_7,    KC_8,    KC_9,    IDLE,    ARMY,  KC_F10,   KC_F1,   KC_F2,   KC_F3, _______, _______,
+    _______,    KC_1,    KC_2,    KC_3,    KC_4, _______,  KC_F12,   KC_F7,   KC_F8,   KC_F9, _______, _______,
+    _______,    KC_5,    KC_6,    KC_7,    KC_8, _______,  KC_F11,   KC_F4,   KC_F5,   KC_F6, _______, _______,
+    _______, _______, _______, _______,    IDLE,    ARMY,  KC_F10,   KC_F1,   KC_F2,   KC_F3, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
   [_GRID] = LAYOUT_planck_grid(
