@@ -36,10 +36,8 @@ enum planck_layers {
 #define CAM8 LCTL(KC_8)
 
 // SC2 selection binds; process_record_user sends these without _INJ's shift.
-enum planck_keycodes {
-  IDLE = SAFE_RANGE, // select all idle workers (plain F1 cycles one at a time)
-  ARMY               // select army
-};
+#define IDLE LCTL(KC_F1) // select all idle workers (plain F1 cycles one at a time)
+#define ARMY KC_F2       // select army
 
 // right hand
 #define ALT_DOT RALT_T(KC_DOT)
@@ -71,20 +69,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______,    CAM7,    CAM8,    KC_9,    KC_0, _______, _______, _______, _______, _______, _______, KC_RSFT,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
-  // Every key here is shifted. Digits 1-8 are camera hot keys so the point is to
-  // easily have layer hold key also hold shift which lets me inject quickly.
-  // Shifted digits still resolve to the plain camera binds, so no alternate
-  // bind is needed in the game.
+  // Shift is held down while holding this layer. everything to the right of
+  // the digit keys a opt out of this though. Digits 1-8 are camera hot keys so
+  // the point is to easily have layer hold key also hold shift which lets me
+  // inject quickly. Shifted digits still resolve to the plain camera binds, so
+  // no alternate bind is needed in the game.
   [_INJ] = LAYOUT_planck_grid(
-    _______,    KC_1,    KC_2,    KC_3, _______, _______, _______, _______, _______, _______, _______, _______,
-    _______,    KC_4,    KC_5,    KC_6, _______, _______, _______, _______, _______, _______, _______, _______,
-    _______,    KC_7,    KC_8,    KC_9,    IDLE,    ARMY, _______, _______, _______, _______, _______, _______,
+    _______,    KC_1,    KC_2,    KC_3, _______, _______,  KC_F12,   KC_F7,   KC_F8,   KC_F9, _______, _______,
+    _______,    KC_4,    KC_5,    KC_6, _______, _______,  KC_F11,   KC_F4,   KC_F5,   KC_F6, _______, _______,
+    _______,    KC_7,    KC_8,    KC_9,    IDLE,    ARMY,  KC_F10,   KC_F1,   KC_F2,   KC_F3, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
   [_GRID] = LAYOUT_planck_grid(
-    _______,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,  KC_F12,   KC_F7,   KC_F8,   KC_F9, _______, _______,
-    _______,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,  KC_F11,   KC_F4,   KC_F5,   KC_F6, _______, _______,
-    _______,    KC_D,    KC_V,    KC_K,    KC_H,    KC_Y,  KC_F10,   KC_F1,   KC_F2,   KC_F3, _______, _______,
+    _______,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U, KC_COMM, KC_SCLN, _______, _______, _______, _______,
+    _______,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O, _______, _______, _______, _______,
+    _______,    KC_D,    KC_V,    KC_K,    KC_H,    KC_Y, ALT_DOT, KC_SLSH, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
   // *** SC2 layouts ends ***
@@ -127,18 +126,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
-// _INJ's held shift would turn these selection binds into "add to selection",
-// so lift it around the tap.
+// _INJ's held shift would turn its F keys and selection binds into "add to
+// selection", so lift it around the tap. _FN's F keys stay shiftable.
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        case KC_F1 ... KC_F12: // covers ARMY
         case IDLE:
-        case ARMY:
-            if (record->event.pressed) {
+            if (record->event.pressed && IS_LAYER_ON(_INJ)) {
                 unregister_mods(MOD_BIT(KC_LSFT));
-                tap_code16(keycode == IDLE ? LCTL(KC_F1) : KC_F2);
+                tap_code16(keycode);
                 register_mods(MOD_BIT(KC_LSFT));
+                return false;
             }
-            return false;
+            return true;
         default:
             return true;
     }
