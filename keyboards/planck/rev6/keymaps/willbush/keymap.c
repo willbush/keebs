@@ -3,8 +3,8 @@
 enum planck_layers {
   _COLEMAK,
   _SC2, // SC2 game layer
-  _SETCAM, // SC2 camera location create layer
-  _INJ, // queen inject (cameras with shift held)
+  _CAM, // camera locations and queen inject
+  _SETCAM, // camera location saves; _CAM's shift lifted while held
   _GRID, // shifts the grid into home key position
   _LOWER,
   _HYPER,
@@ -17,15 +17,17 @@ enum planck_layers {
 #define COLEMAK PDF(_COLEMAK)
 #define SC2 PDF(_SC2)
 #define LOWER MO(_LOWER)
-#define SETCAM MO(_SETCAM)
-#define INJ LM(_INJ, MOD_LSFT)
+#define CAM LM(_CAM, MOD_LSFT)
 #define GRID MO(_GRID)
 #define RAISE MO(_RAISE)
 #define HYPER MO(_HYPER)
 #define FN MO(_FN)
 #define NUM MO(_NUM)
 
-// SC2 camera location create binds
+#define IDLE LCTL(KC_F1) // select all idle workers (plain F1 cycles one at a time)
+#define ARMY KC_F2       // select army
+
+// SC2 camera location save binds
 #define CAM1 LCTL(KC_1)
 #define CAM2 LCTL(KC_2)
 #define CAM3 LCTL(KC_3)
@@ -35,9 +37,9 @@ enum planck_layers {
 #define CAM7 LCTL(KC_7)
 #define CAM8 LCTL(KC_8)
 
-// SC2 selection binds; process_record_user sends these without _INJ's shift.
-#define IDLE LCTL(KC_F1) // select all idle workers (plain F1 cycles one at a time)
-#define ARMY KC_F2       // select army
+enum custom_keycodes {
+  SETCAM = SAFE_RANGE // hold: _SETCAM with _CAM's shift lifted
+};
 
 // right hand
 #define ALT_DOT RALT_T(KC_DOT)
@@ -61,23 +63,26 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U, KC_COMM, KC_SCLN, KC_BSPC,
     CTL_ESC,    KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O, CTL_QOT,
     KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_Y,  KC_DOT, KC_SLSH, SFT_ENT,
-    XXXXXXX, XXXXXXX, KC_LALT,  SETCAM,     INJ,    GRID,   KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
-  ),
-  [_SETCAM] = LAYOUT_planck_grid(
-    _______,    CAM1,    CAM2,    CAM3,    CAM4, _______, _______, _______, _______, _______, _______, _______,
-    _______,    CAM5,    CAM6,    CAM7,    CAM8, _______, _______, _______, _______, _______, _______,  KC_DEL,
-    _______, _______, _______,    KC_0,    KC_9, _______, _______, _______, _______, _______, _______, KC_RSFT,
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+    XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT,     CAM,    GRID,   KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
   ),
   // Shift is held down while holding this layer. everything to the right of
-  // the digit keys a opt out of this though. Digits 1-8 are camera hot keys so
+  // the digit keys opts out of this though. Digits 1-8 are camera hot keys so
   // the point is to easily have layer hold key also hold shift which lets me
   // inject quickly. Shifted digits still resolve to the plain camera binds, so
-  // no alternate bind is needed in the game.
-  [_INJ] = LAYOUT_planck_grid(
+  // no alternate bind is needed in the game. I set camera locations by holding
+  // SETCAM (which lifts the shift).
+  [_CAM] = LAYOUT_planck_grid(
     _______,    KC_1,    KC_2,    KC_3,    KC_4, _______,  KC_F12,   KC_F7,   KC_F8,   KC_F9, _______, _______,
-    _______,    KC_5,    KC_6,    KC_7,    KC_8, _______,  KC_F11,   KC_F4,   KC_F5,   KC_F6, _______, _______,
+     SETCAM,    KC_5,    KC_6,    KC_7,    KC_8, _______,  KC_F11,   KC_F4,   KC_F5,   KC_F6, _______, _______,
     _______, _______, _______, _______,    IDLE,    ARMY,  KC_F10,   KC_F1,   KC_F2,   KC_F3, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+  ),
+  // Held from _CAM via SETCAM: shift is lifted so clicks select normally and
+  // digits send the exact Ctrl+n CameraSave binds.
+  [_SETCAM] = LAYOUT_planck_grid(
+    _______,    CAM1,    CAM2,    CAM3,    CAM4, _______, _______, _______, _______, _______, _______, _______,
+    _______,    CAM5,    CAM6,    CAM7,    CAM8, _______, _______, _______, _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
   [_GRID] = LAYOUT_planck_grid(
@@ -126,13 +131,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
-// _INJ's held shift would turn its F keys and selection binds into "add to
+// _CAM's held shift would turn its F keys and selection binds into "add to
 // selection", so lift it around the tap. _FN's F keys stay shiftable.
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        case SETCAM:
+            // Hold: _SETCAM with _CAM's shift lifted, so clicks select
+            // normally and digits send plain Ctrl+n save binds.
+            if (record->event.pressed) {
+                unregister_mods(MOD_BIT(KC_LSFT));
+                layer_on(_SETCAM);
+            } else {
+                layer_off(_SETCAM);
+                if (IS_LAYER_ON(_CAM)) {
+                    register_mods(MOD_BIT(KC_LSFT));
+                }
+            }
+            return false;
         case KC_F1 ... KC_F12: // covers ARMY
         case IDLE:
-            if (record->event.pressed && IS_LAYER_ON(_INJ)) {
+            // The shift check skips the lift while SETCAM already has it off.
+            if (record->event.pressed && IS_LAYER_ON(_CAM) &&
+                (get_mods() & MOD_BIT(KC_LSFT))) {
                 unregister_mods(MOD_BIT(KC_LSFT));
                 tap_code16(keycode);
                 register_mods(MOD_BIT(KC_LSFT));
@@ -158,9 +178,9 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 
 layer_state_t layer_state_set_user(layer_state_t state) {
   state = update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
-  // The SC2 layer swaps LOWER for INJ, so it needs its own path to _ADJUST.
+  // The SC2 layer swaps LOWER for CAM, so it needs its own path to _ADJUST.
   // Must come after the call above, which clears _ADJUST.
-  if (layer_state_cmp(state, _INJ) && layer_state_cmp(state, _RAISE)) {
+  if (layer_state_cmp(state, _CAM) && layer_state_cmp(state, _RAISE)) {
     state |= (layer_state_t)1 << _ADJUST;
   }
   return state;
