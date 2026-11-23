@@ -3,9 +3,11 @@
 enum planck_layers {
   _COLEMAK,
   _SC2, // SC2 game layer
+  _WOW, // WOW game layer
   _CAM, // camera locations and queen inject
   _SETCAM, // camera location saves; _CAM's shift lifted while held
   _GRID, // shifts the grid into home key position
+  _GRID2, // WOW: right hand's five columns under the left hand
   _LOWER,
   _HYPER,
   _RAISE,
@@ -16,9 +18,11 @@ enum planck_layers {
 
 #define COLEMAK PDF(_COLEMAK)
 #define SC2 PDF(_SC2)
+#define WOW PDF(_WOW)
 #define LOWER MO(_LOWER)
 #define CAM LM(_CAM, MOD_LSFT)
 #define GRID MO(_GRID)
+#define GRID2 MO(_GRID2)
 #define RAISE MO(_RAISE)
 #define HYPER MO(_HYPER)
 #define FN MO(_FN)
@@ -58,12 +62,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_LSFT,    KC_Z,   ALT_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_Y, ALT_DOT, KC_SLSH, SFT_ENT,
     XXXXXXX,     NUM, XXXXXXX, KC_LGUI,   LOWER,   HYPER,  KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
   ),
-  // *** SC2 game layouts starts ***
+  // *** SC2 game ***
   [_SC2] = LAYOUT_planck_grid(
      KC_ESC,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U, KC_COMM, KC_SCLN, KC_BSPC,
     KC_LCTL,    KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O, CTL_QOT,
     KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_Y,  KC_DOT, KC_SLSH, SFT_ENT,
     XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT,     CAM,    GRID,   KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
+  ),
+  // *** WOW game ***
+  [_WOW] = LAYOUT_planck_grid(
+     KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U, KC_COMM, KC_SCLN, KC_BSPC,
+    CTL_ESC,    KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O, CTL_QOT,
+    KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_Y,  KC_DOT, KC_SLSH, SFT_ENT,
+    XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT,   LOWER,   GRID2,  KC_SPC,   RAISE, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX
   ),
   // Shift is held down while holding this layer. everything to the right of
   // the digit keys opts out of this though. Digits 1-8 are camera hot keys so
@@ -85,13 +96,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
+  // SC2: shifts the right hand's keys left by four columns
   [_GRID] = LAYOUT_planck_grid(
     _______,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U, KC_COMM, KC_SCLN, _______, _______, _______, _______,
     _______,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O, _______, _______, _______, _______,
     _______,    KC_D,    KC_V,    KC_K,    KC_H,    KC_Y, ALT_DOT, KC_SLSH, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
-  // *** SC2 layouts ends ***
+  // Shifts the right hand's five columns onto the left hand, so every action
+  // bar bind is reachable without leaving the mouse.
+  [_GRID2] = LAYOUT_planck_grid(
+    _______,    KC_J,    KC_L,    KC_U, KC_COMM, KC_SCLN, _______, _______, _______, _______, _______, _______,
+    _______,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O, _______, _______, _______, _______, _______, _______,
+    _______,    KC_K,    KC_H,    KC_Y,  KC_DOT, KC_SLSH, _______, _______, _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+  ),
+  // *** game layouts ends ***
   [_LOWER] = LAYOUT_planck_grid(
     _______,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0, _______,
     KC_LCTL, KC_TILD, KC_LPRN, KC_EXLM,  KC_EQL, KC_RPRN, KC_LCBR, KC_PERC, KC_AMPR, KC_RCBR, KC_PIPE,  KC_DEL,
@@ -124,7 +144,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_ADJUST] = LAYOUT_planck_grid(
     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-    XXXXXXX, XXXXXXX, XXXXXXX,   AU_ON,  AU_OFF, XXXXXXX, XXXXXXX, COLEMAK,     SC2, XXXXXXX, XXXXXXX, XXXXXXX,
+    XXXXXXX, XXXXXXX, XXXXXXX,   AU_ON,  AU_OFF, XXXXXXX, XXXXXXX, COLEMAK,     SC2,     WOW, XXXXXXX, XXXXXXX,
     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, DB_TOGG, XXXXXXX,
     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, _______, _______, _______, XXXXXXX, XXXXXXX, QK_BOOT, XXXXXXX
   )
